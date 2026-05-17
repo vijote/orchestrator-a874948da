@@ -22,6 +22,14 @@
 </div>
 
 <script>
+    function generateSecureShortHash(length = 8) {
+        // Genera bytes aleatorios criptográficamente seguros
+        const arr = new Uint8Array(length / 2);
+        crypto.getRandomValues(arr);
+        
+        // Los convierte a formato hexadecimal
+        return Array.from(arr, byte => byte.toString(16).padStart(2, '0')).join('');
+    }
     // Este script se ejecuta en el cliente (navegador) automáticamente
     const btnCreate = document.getElementById("btn-create");
     const btnPromote = document.getElementById("btn-promote");
@@ -34,7 +42,7 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ environment_id: crypto.randomUUID() })
+                body: JSON.stringify({ environment_id: generateSecureShortHash(8) })
             });
 
             if (!response.ok) {
