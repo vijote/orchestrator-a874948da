@@ -60,7 +60,11 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ hosted_zone_id: "Z05553892GZVUM2PDNUAH", domain_name: "app.vijote.dev", distribution_domain_name: "" })
+                body: JSON.stringify({
+                    distribution_id: import.meta.env.PUBLIC_DISTRIBUTION_ID,
+                    oac_id: import.meta.env.PUBLIC_OAC_ID,
+                    alb_dns_name: import.meta.env.PUBLIC_ALB_DNS_NAME
+                })
             });
 
             if (!response.ok) {
