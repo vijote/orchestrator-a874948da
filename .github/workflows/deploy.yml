@@ -33,15 +33,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Install modules
-        run: npm ci
+      - uses: oven-sh/setup-bun@v2
+      
+      - name: Install dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INTERNAL_PASSWORD: ${{ secrets.INTERNAL_PASSWORD }}
+        run: bun install
 
       - name: Build application
         env:
             PUBLIC_DISTRIBUTION_ID: ${{ github.event.inputs.distribution_id }}
             PUBLIC_OAC_ID: ${{ github.event.inputs.oac_id }}
             PUBLIC_ALB_DNS_NAME: ${{ github.event.inputs.alb_dns_name }}
-        run: npm run build
+        run: bun run build
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
