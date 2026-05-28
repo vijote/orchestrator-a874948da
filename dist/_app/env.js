@@ -1,0 +1,1 @@
+export const env={"PUBLIC_ALB_DNS_NAME":"tu_alb_dns_aca","PUBLIC_DISTRIBUTION_ID":"tu_id_aca","PUBLIC_OAC_ID":"tu_oac_aca"}
