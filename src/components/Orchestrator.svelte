@@ -121,7 +121,7 @@
                 </span>
               </td>
               <td>
-                <button on:click={promoteToGreen(env.host_bucket_name, env.recipes_bucket_name)}>Promote to green</button>
+                <button on:click={promoteToGreen(env.host_bucket_domain, env.recipes_bucket_domain)}>Promote to green</button>
               </td>
             </tr>
           {/each}
