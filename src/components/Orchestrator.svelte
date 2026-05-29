@@ -114,7 +114,7 @@
         <tbody>
           {#each response.environments as env}
             <tr>
-              <td>{env.environment_id}</td>
+              <td>{env.environment}</td>
               <td>
                 <span class="status-{env.state.toLowerCase()}">
                   {env.state}
