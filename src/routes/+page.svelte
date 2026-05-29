@@ -1,7 +1,5 @@
 <script lang="ts">
     import Orchestrator from '../components/Orchestrator.svelte';
-
-	import Counter from './Counter.svelte';
 </script>
 
 <svelte:head>

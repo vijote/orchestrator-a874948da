@@ -51,10 +51,58 @@
         console.log("Iniciando: Delete Old Environment...");
         alert("Acción: Eliminando el entorno antiguo de forma segura");
     }
+
+    // Función que realiza la petición a tu API
+    async function fetchEnvironments() {
+        const response = await fetch('/api/getall');
+        
+        if (!response.ok) {
+        throw new Error('Error al cargar los datos');
+        }
+        
+        // Retornamos el array de objetos directamente
+        return await response.json();
+    }
+
+    // Guardamos la promesa en una variable
+    let environmentsPromise = fetchEnvironments();
 </script>
 
 <div class="env-manager-container">
     <h2>Environment Management</h2>
+
+    <h2>Lista de Entornos</h2>
+
+  {#await environmentsPromise}
+    <p>Cargando datos...</p>
+  {:then environments}
+    {#if environments.length === 0}
+      <p>No se encontraron entornos.</p>
+    {:else}
+      <table>
+        <thead>
+          <tr>
+            <th>ID del Entorno</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each environments as env}
+            <tr>
+              <td>{env.environment_id}</td>
+              <td>
+                <span class="status-{env.state.toLowerCase()}">
+                  {env.state}
+                </span>
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    {/if}
+  {:catch error}
+    <p style="color: red;">Hubo un problema: {error.message}</p>
+  {/await}
 
     <div class="button-group">
         <button class="btn btn-create" on:click={handleCreate}>
