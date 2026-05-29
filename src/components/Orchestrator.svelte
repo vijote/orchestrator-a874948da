@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { PUBLIC_DISTRIBUTION_ID, PUBLIC_OAC_ID, PUBLIC_ALB_DNS_NAME } from '$env/static/public';
 
     function generateSecureShortHash(length = 8) {
@@ -66,6 +66,30 @@
 
     // Guardamos la promesa en una variable
     let environmentsPromise = fetchEnvironments();
+
+    const promoteToGreen = (hostBucketName: string, recipesBucketName: string) => async () => {
+        try {
+            const response = await fetch("/api/promote", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    distribution_id: PUBLIC_DISTRIBUTION_ID,
+                    oac_id: PUBLIC_OAC_ID,
+                    alb_dns_name: PUBLIC_ALB_DNS_NAME,
+                    host_bucket_name: hostBucketName,
+                    recipes_bucket_name: recipesBucketName,
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`server error: ${response.status}`);
+            }
+        } catch (error) {
+            console.error("error promoting environment:", error);
+        }
+    }
 </script>
 
 <div class="env-manager-container">
@@ -84,6 +108,7 @@
           <tr>
             <th>ID del Entorno</th>
             <th>Estado</th>
+            <th>Accion</th>
           </tr>
         </thead>
         <tbody>
@@ -94,6 +119,9 @@
                 <span class="status-{env.state.toLowerCase()}">
                   {env.state}
                 </span>
+              </td>
+              <td>
+                <button on:click={promoteToGreen(env.host_bucket_name, env.recipes_bucket_name)}>Promote to green</button>
               </td>
             </tr>
           {/each}
