@@ -99,8 +99,8 @@
 
   {#await environmentsPromise}
     <p>Cargando datos...</p>
-  {:then environments}
-    {#if environments.length === 0}
+  {:then response}
+    {#if response.environments.length === 0}
       <p>No se encontraron entornos.</p>
     {:else}
       <table>
@@ -112,7 +112,7 @@
           </tr>
         </thead>
         <tbody>
-          {#each environments as env}
+          {#each response.environments as env}
             <tr>
               <td>{env.environment_id}</td>
               <td>
