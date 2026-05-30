@@ -1,10 +1,17 @@
 <script lang="ts">
-    import { PUBLIC_DISTRIBUTION_ID, PUBLIC_OAC_ID, PUBLIC_ALB_DNS_NAME } from '$env/static/public';
+    import {
+        PUBLIC_GREEN_DISTRIBUTION_ID,
+        PUBLIC_BLUE_DISTRIBUTION_ID,
+        PUBLIC_OAC_ID,
+        PUBLIC_ALB_DNS_NAME,
+    } from "$env/static/public";
 
     function generateSecureShortHash(length = 8) {
         const arr = new Uint8Array(length / 2);
         crypto.getRandomValues(arr);
-        return Array.from(arr, byte => byte.toString(16).padStart(2, '0')).join('');
+        return Array.from(arr, (byte) =>
+            byte.toString(16).padStart(2, "0"),
+        ).join("");
     }
 
     async function handleCreate() {
@@ -14,7 +21,9 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ environment_id: generateSecureShortHash(8) })
+                body: JSON.stringify({
+                    environment_id: generateSecureShortHash(8),
+                }),
             });
 
             if (!response.ok) {
@@ -25,28 +34,6 @@
         }
     }
 
-    async function handlePromote() {
-        try {
-            const response = await fetch("/api/promote", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    distribution_id: PUBLIC_DISTRIBUTION_ID,
-                    oac_id: PUBLIC_OAC_ID,
-                    alb_dns_name: PUBLIC_ALB_DNS_NAME
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`server error: ${response.status}`);
-            }
-        } catch (error) {
-            console.error("error promoting environment:", error);
-        }
-    }
-
     function handleDelete() {
         console.log("Iniciando: Delete Old Environment...");
         alert("Acción: Eliminando el entorno antiguo de forma segura");
@@ -54,12 +41,12 @@
 
     // Función que realiza la petición a tu API
     async function fetchEnvironments() {
-        const response = await fetch('/api/getall');
-        
+        const response = await fetch("/api/getall");
+
         if (!response.ok) {
-        throw new Error('Error al cargar los datos');
+            throw new Error("Error al cargar los datos");
         }
-        
+
         // Retornamos el array de objetos directamente
         return await response.json();
     }
@@ -67,29 +54,55 @@
     // Guardamos la promesa en una variable
     let environmentsPromise = fetchEnvironments();
 
-    const promoteToGreen = (hostBucketName: string, recipesBucketName: string) => async () => {
-        try {
-            const response = await fetch("/api/promote", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    distribution_id: PUBLIC_DISTRIBUTION_ID,
-                    oac_id: PUBLIC_OAC_ID,
-                    alb_dns_name: PUBLIC_ALB_DNS_NAME,
-                    host_bucket_name: hostBucketName,
-                    recipes_bucket_name: recipesBucketName,
-                })
-            });
+    const promoteToGreen =
+        (hostBucketName: string, recipesBucketName: string) => async () => {
+            try {
+                const response = await fetch("/api/promote", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        distribution_id: PUBLIC_GREEN_DISTRIBUTION_ID,
+                        oac_id: PUBLIC_OAC_ID,
+                        alb_dns_name: PUBLIC_ALB_DNS_NAME,
+                        host_bucket_name: hostBucketName,
+                        recipes_bucket_name: recipesBucketName,
+                    }),
+                });
 
-            if (!response.ok) {
-                throw new Error(`server error: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`server error: ${response.status}`);
+                }
+            } catch (error) {
+                console.error("error promoting environment:", error);
             }
-        } catch (error) {
-            console.error("error promoting environment:", error);
-        }
-    }
+        };
+
+    const promoteToBlue =
+        (hostBucketName: string, recipesBucketName: string) => async () => {
+            try {
+                const response = await fetch("/api/promote", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        distribution_id: PUBLIC_BLUE_DISTRIBUTION_ID,
+                        oac_id: PUBLIC_OAC_ID,
+                        alb_dns_name: PUBLIC_ALB_DNS_NAME,
+                        host_bucket_name: hostBucketName,
+                        recipes_bucket_name: recipesBucketName,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`server error: ${response.status}`);
+                }
+            } catch (error) {
+                console.error("error promoting environment:", error);
+            }
+        };
 </script>
 
 <div class="env-manager-container">
@@ -97,52 +110,60 @@
 
     <h2>Lista de Entornos</h2>
 
-  {#await environmentsPromise}
-    <p>Cargando datos...</p>
-  {:then response}
-    {#if response.environments.length === 0}
-      <p>No se encontraron entornos.</p>
-    {:else}
-      <table>
-        <thead>
-          <tr>
-            <th>ID del Entorno</th>
-            <th>Estado</th>
-            <th>Accion</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each response.environments as env}
-            <tr>
-              <td>{env.environment}</td>
-              <td>
-                <span class="status-{env.state.toLowerCase()}">
-                  {env.state}
-                </span>
-              </td>
-              <td>
-                <button on:click={promoteToGreen(env.host_bucket_domain, env.recipes_bucket_domain)}>Promote to green</button>
-              </td>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-    {/if}
-  {:catch error}
-    <p style="color: red;">Hubo un problema: {error.message}</p>
-  {/await}
+    {#await environmentsPromise}
+        <p>Cargando datos...</p>
+    {:then response}
+        {#if response.environments.length === 0}
+            <p>No se encontraron entornos.</p>
+        {:else}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID del Entorno</th>
+                        <th>Estado</th>
+                        <th>Accion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each response.environments as env}
+                        <tr>
+                            <td>{env.environment}</td>
+                            <td>
+                                <span class="status-{env.state.toLowerCase()}">
+                                    {env.state}
+                                </span>
+                            </td>
+                            {#if env.state === "unused"}
+                                <td>
+                                    <button
+                                        on:click={promoteToGreen(
+                                            env.host_bucket_domain,
+                                            env.recipes_bucket_domain,
+                                        )}>Promote to green</button
+                                    >
+                                </td>
+                            {:else if env.state === "green"}
+                                <td>
+                                    <button
+                                        on:click={promoteToBlue(
+                                            env.host_bucket_domain,
+                                            env.recipes_bucket_domain,
+                                        )}>Promote to blue</button
+                                    >
+                                </td>
+                            {/if}
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        {/if}
+    {:catch error}
+        <p style="color: red;">Hubo un problema: {error.message}</p>
+    {/await}
 
     <div class="button-group">
         <button class="btn btn-create" on:click={handleCreate}>
             Create New Green Environment
-        </button>
-
-        <button class="btn btn-promote" on:click={handlePromote}>
-            Promote Green to Blue
-        </button>
-
-        <button class="btn btn-delete" on:click={handleDelete}>
-            Delete Old Environment
         </button>
     </div>
 </div>
@@ -170,7 +191,9 @@
         border-radius: 6px;
         font-weight: 600;
         cursor: pointer;
-        transition: background-color 0.2s, transform 0.1s;
+        transition:
+            background-color 0.2s,
+            transform 0.1s;
         text-align: left;
     }
 

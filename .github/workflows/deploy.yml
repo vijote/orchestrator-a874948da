@@ -6,7 +6,9 @@ on:
       - main  # Trigger on push to main branch
   workflow_dispatch:
     inputs:
-      distribution_id:
+      blue_distribution_id:
+        type: string
+      green_distribution_id:
         type: string
       alb_dns_name:
         type: string
@@ -40,7 +42,8 @@ jobs:
 
       - name: Build application
         env:
-            PUBLIC_DISTRIBUTION_ID: ${{ github.event.inputs.distribution_id }}
+            PUBLIC_GREEN_DISTRIBUTION_ID: ${{ github.event.inputs.green_distribution_id }}
+            PUBLIC_BLUE_DISTRIBUTION_ID: ${{ github.event.inputs.blue_distribution_id }}
             PUBLIC_OAC_ID: ${{ github.event.inputs.oac_id }}
             PUBLIC_ALB_DNS_NAME: ${{ github.event.inputs.alb_dns_name }}
         run: bun run build
