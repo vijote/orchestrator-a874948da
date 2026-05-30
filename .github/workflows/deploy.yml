@@ -10,6 +10,8 @@ on:
         type: string
       green_distribution_id:
         type: string
+      orchestrator_distribution_id:
+        type: string
       alb_dns_name:
         type: string
       oac_id:
@@ -20,7 +22,7 @@ env:
   AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
   AWS_BUCKET_NAME: ${{ vars.AWS_BUCKET_NAME }}
   AWS_GITHUB_S3_ROLE_NAME: ${{ vars.AWS_GITHUB_S3_ROLE_NAME }}
-  CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+  CLOUDFRONT_DISTRIBUTION_ID: ${{ github.event.inputs.blue_distribution_id }}
 
 jobs:
   deploy:
