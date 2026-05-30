@@ -44,7 +44,7 @@
         const response = await fetch("/api/getall");
 
         if (!response.ok) {
-            throw new Error("Error al cargar los datos");
+            throw new Error("Error al cargar los datos de los entornos");
         }
 
         // Retornamos el array de objetos directamente
@@ -53,6 +53,11 @@
 
     // Guardamos la promesa en una variable
     let environmentsPromise = fetchEnvironments();
+
+    // NUEVA FUNCIÓN: Vuelve a ejecutar la petición y reasigna la promesa
+    function handleRetry() {
+        environmentsPromise = fetchEnvironments();
+    }
 
     const promoteToGreen =
         (hostBucketName: string, recipesBucketName: string) => async () => {
@@ -111,8 +116,14 @@
     <h2>Lista de Entornos</h2>
 
     {#await environmentsPromise}
-        <p>Cargando datos...</p>
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <p>Cargando datos...</p>
+        </div>
     {:then response}
+            <button class="btn btn-retry" on:click={handleRetry}>
+                🔄 Reintentar cargar
+            </button>
         {#if response.environments.length === 0}
             <p>No se encontraron entornos.</p>
         {:else}
@@ -158,7 +169,12 @@
             </table>
         {/if}
     {:catch error}
-        <p style="color: red;">Hubo un problema: {error.message}</p>
+        <div class="error-container">
+            <p class="error-text">Hubo un problema: {error.message}</p>
+            <button class="btn btn-retry" on:click={handleRetry}>
+                🔄 Reintentar cargar
+            </button>
+        </div>
     {/await}
 
     <div class="button-group">
@@ -179,6 +195,60 @@
         color: #1e293b;
     }
 
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        gap: 1rem;
+        color: #64748b;
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* CAMBIO AQUÍ: Estilos para el contenedor de error y el botón de retry */
+    .error-container {
+        padding: 1rem;
+        background-color: #fef2f2;
+        border: 1px solid #fee2e2;
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+    }
+
+    .error-text {
+        color: #ef4444;
+        margin-top: 0;
+        font-weight: 500;
+    }
+
+    .btn-retry {
+        background-color: #475569;
+        color: white;
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .btn-retry:hover {
+        background-color: #334155;
+    }
+
     .button-group {
         display: flex;
         flex-direction: column;
@@ -194,7 +264,6 @@
         transition:
             background-color 0.2s,
             transform 0.1s;
-        text-align: left;
     }
 
     .btn:active {
@@ -204,24 +273,9 @@
     .btn-create {
         background-color: #22c55e;
         color: white;
+        text-align: left;
     }
     .btn-create:hover {
         background-color: #16a34a;
-    }
-
-    .btn-promote {
-        background-color: #3b82f6;
-        color: white;
-    }
-    .btn-promote:hover {
-        background-color: #2563eb;
-    }
-
-    .btn-delete {
-        background-color: #ef4444;
-        color: white;
-    }
-    .btn-delete:hover {
-        background-color: #dc2626;
     }
 </style>
