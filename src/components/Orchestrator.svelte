@@ -3,7 +3,6 @@
         PUBLIC_GREEN_DISTRIBUTION_ID,
         PUBLIC_BLUE_DISTRIBUTION_ID,
         PUBLIC_OAC_ID,
-        PUBLIC_ALB_DNS_NAME,
     } from "$env/static/public";
 
     function generateSecureShortHash(length = 8) {
@@ -60,7 +59,7 @@
     }
 
     const promoteToGreen =
-        (hostBucketName: string, recipesBucketName: string) => async () => {
+        (hostBucketName: string, recipesBucketName: string, albDnsName: string) => async () => {
             try {
                 const response = await fetch("/api/promote", {
                     method: "POST",
@@ -70,7 +69,7 @@
                     body: JSON.stringify({
                         distribution_id: PUBLIC_GREEN_DISTRIBUTION_ID,
                         oac_id: PUBLIC_OAC_ID,
-                        alb_dns_name: PUBLIC_ALB_DNS_NAME,
+                        alb_dns_name: albDnsName,
                         host_bucket_name: hostBucketName,
                         recipes_bucket_name: recipesBucketName,
                     }),
@@ -85,7 +84,7 @@
         };
 
     const promoteToBlue =
-        (hostBucketName: string, recipesBucketName: string) => async () => {
+        (hostBucketName: string, recipesBucketName: string, albDnsName: string) => async () => {
             try {
                 const response = await fetch("/api/promote", {
                     method: "POST",
@@ -95,7 +94,7 @@
                     body: JSON.stringify({
                         distribution_id: PUBLIC_BLUE_DISTRIBUTION_ID,
                         oac_id: PUBLIC_OAC_ID,
-                        alb_dns_name: PUBLIC_ALB_DNS_NAME,
+                        alb_dns_name: albDnsName,
                         host_bucket_name: hostBucketName,
                         recipes_bucket_name: recipesBucketName,
                     }),
@@ -150,6 +149,7 @@
                                         on:click={promoteToGreen(
                                             env.host_bucket_domain,
                                             env.recipes_bucket_domain,
+                                            env.alb_dns_name
                                         )}>Promote to green</button
                                     >
                                 </td>
@@ -159,6 +159,7 @@
                                         on:click={promoteToBlue(
                                             env.host_bucket_domain,
                                             env.recipes_bucket_domain,
+                                            env.alb_dns_name
                                         )}>Promote to blue</button
                                     >
                                 </td>
