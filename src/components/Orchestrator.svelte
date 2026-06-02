@@ -139,7 +139,7 @@
                         <tr>
                             <td>{env.environment}</td>
                             <td>
-                                <span class="status-{env.state.toLowerCase()}">
+                                <span class="status-{env.state}">
                                     {env.state}
                                 </span>
                             </td>
