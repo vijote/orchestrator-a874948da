@@ -48,7 +48,7 @@
         }
 
         // Retornamos el array de objetos directamente
-        return await response.json();
+        return response.json();
     }
 
     // Guardamos la promesa en una variable
