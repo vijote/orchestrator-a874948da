@@ -139,11 +139,11 @@
                         <tr>
                             <td>{env.environment}</td>
                             <td>
-                                <span class="status-{env.state}">
-                                    {env.state}
+                                <span class="status-{env.env_status}">
+                                    {env.env_status}
                                 </span>
                             </td>
-                            {#if env.state === "unused"}
+                            {#if env.env_status === "unused"}
                                 <td>
                                     <button
                                         on:click={promoteToGreen(
@@ -153,7 +153,7 @@
                                         )}>Promote to green</button
                                     >
                                 </td>
-                            {:else if env.state === "green"}
+                            {:else if env.env_status === "green"}
                                 <td>
                                     <button
                                         on:click={promoteToBlue(
