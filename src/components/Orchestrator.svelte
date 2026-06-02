@@ -46,8 +46,8 @@
             throw new Error("Error al cargar los datos de los entornos");
         }
 
-        // Retornamos el array de objetos directamente
-        return response.json();
+        const data = await response.json();
+        return data;
     }
 
     // Guardamos la promesa en una variable
