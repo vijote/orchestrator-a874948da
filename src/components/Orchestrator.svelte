@@ -59,7 +59,7 @@
     }
 
     const promoteToGreen =
-        (hostBucketName: string, recipesBucketName: string, albDnsName: string) => async () => {
+        (environmentId: string, hostBucketName: string, recipesBucketName: string, albDnsName: string) => async () => {
             try {
                 const response = await fetch("/api/promote", {
                     method: "POST",
@@ -67,6 +67,7 @@
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
+                        environment_id: environmentId,
                         distribution_id: PUBLIC_GREEN_DISTRIBUTION_ID,
                         oac_id: PUBLIC_OAC_ID,
                         alb_dns_name: albDnsName,
@@ -147,6 +148,7 @@
                                 <td>
                                     <button
                                         on:click={promoteToGreen(
+                                            env.environment,
                                             env.host_bucket_domain,
                                             env.recipes_bucket_domain,
                                             env.alb_dns_name
