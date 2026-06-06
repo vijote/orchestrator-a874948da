@@ -61,7 +61,7 @@
     const promoteToGreen =
         (environmentId: string, hostBucketName: string, recipesBucketName: string, albDnsName: string) => async () => {
             try {
-                const response = await fetch("/api/promote", {
+                const response = await fetch("/api/promote-green", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -87,7 +87,7 @@
     const promoteToBlue =
         (hostBucketName: string, recipesBucketName: string, albDnsName: string) => async () => {
             try {
-                const response = await fetch("/api/promote", {
+                const response = await fetch("/api/promote-blue", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
