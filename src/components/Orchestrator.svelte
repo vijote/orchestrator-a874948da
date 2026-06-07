@@ -84,8 +84,7 @@
             }
         };
 
-    const promoteToBlue =
-        (hostBucketName: string, recipesBucketName: string, albDnsName: string) => async () => {
+    const promoteToBlue = async () => {
             try {
                 const response = await fetch("/api/promote-blue", {
                     method: "POST",
@@ -93,11 +92,8 @@
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        distribution_id: PUBLIC_BLUE_DISTRIBUTION_ID,
-                        oac_id: PUBLIC_OAC_ID,
-                        alb_dns_name: albDnsName,
-                        host_bucket_name: hostBucketName,
-                        recipes_bucket_name: recipesBucketName,
+                        primary_distribution_id: PUBLIC_BLUE_DISTRIBUTION_ID,
+                        staging_distribution_id: PUBLIC_GREEN_DISTRIBUTION_ID
                     }),
                 });
 
@@ -158,11 +154,7 @@
                             {:else if env.env_status === "green"}
                                 <td>
                                     <button
-                                        on:click={promoteToBlue(
-                                            env.host_bucket_domain,
-                                            env.recipes_bucket_domain,
-                                            env.alb_dns_name
-                                        )}>Promote to blue</button
+                                        on:click={promoteToBlue}>Promote to blue</button
                                     >
                                 </td>
                             {/if}
