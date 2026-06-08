@@ -84,7 +84,7 @@
             }
         };
 
-    const promoteToBlue = async () => {
+    const promoteToBlue = (environmentId: string) => async () => {
             try {
                 const response = await fetch("/api/promote-blue", {
                     method: "POST",
@@ -92,6 +92,7 @@
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
+                        environment_id: environmentId,
                         primary_distribution_id: PUBLIC_BLUE_DISTRIBUTION_ID,
                         staging_distribution_id: PUBLIC_GREEN_DISTRIBUTION_ID
                     }),
@@ -154,7 +155,7 @@
                             {:else if env.env_status === "green"}
                                 <td>
                                     <button
-                                        on:click={promoteToBlue}>Promote to blue</button
+                                        on:click={promoteToBlue(env.environment)}>Promote to blue</button
                                     >
                                 </td>
                             {/if}
