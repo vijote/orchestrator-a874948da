@@ -105,6 +105,26 @@
                 console.error("error promoting environment:", error);
             }
         };
+
+    const deleteEnvironment = (environmentId: string) => async () => {
+            try {
+                const response = await fetch("/api/destroy", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        "environment_id": environmentId
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`server error: ${response.status}`);
+                }
+            } catch (error) {
+                console.error("error promoting environment:", error);
+            }
+        };
 </script>
 
 <div class="env-manager-container">
@@ -146,8 +166,8 @@
                                     <button
                                         on:click={promoteToGreen(
                                             env.environment,
-                                            env.host_bucket_domain,
-                                            env.recipes_bucket_domain,
+                                            env.host_bucket_name,
+                                            env.recipes_bucket_name,
                                             env.alb_dns_name
                                         )}>Promote to green</button
                                     >
@@ -156,6 +176,12 @@
                                 <td>
                                     <button
                                         on:click={promoteToBlue(env.environment)}>Promote to blue</button
+                                    >
+                                </td>
+                            {:else if env.env_status === "green" || env.env_status === "unused"}
+                                <td>
+                                    <button
+                                        on:click={deleteEnvironment(env.environment)}>Delete environment</button
                                     >
                                 </td>
                             {/if}
