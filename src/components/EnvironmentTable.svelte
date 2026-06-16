@@ -76,7 +76,7 @@
                                     class="btn btn-promote"
                                     disabled={env.status === "processing"}
                                     onclick={() =>
-                                        handlePromote(env.id, env.state)}
+                                        handlePromote(env.environment, env.state)}
                                 >
                                     {env.status === "processing"
                                         ? "Building"
