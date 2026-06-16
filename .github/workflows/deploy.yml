@@ -44,10 +44,10 @@ jobs:
 
       - name: Build application
         env:
-            PUBLIC_GREEN_DISTRIBUTION_ID: ${{ github.event.inputs.green_distribution_id }}
-            PUBLIC_BLUE_DISTRIBUTION_ID: ${{ github.event.inputs.blue_distribution_id }}
-            PUBLIC_OAC_ID: ${{ github.event.inputs.oac_id }}
-            PUBLIC_ALB_DNS_NAME: ${{ github.event.inputs.alb_dns_name }}
+            GREEN_DISTRIBUTION_ID: ${{ github.event.inputs.green_distribution_id }}
+            BLUE_DISTRIBUTION_ID: ${{ github.event.inputs.blue_distribution_id }}
+            OAC_ID: ${{ github.event.inputs.oac_id }}
+            ALB_DNS_NAME: ${{ github.event.inputs.alb_dns_name }}
         run: bun run build
 
       - name: Configure AWS credentials
