@@ -1,89 +1,11 @@
 <!-- EnvironmentTable.svelte -->
 <script lang="ts">
-    import {
-        PUBLIC_GREEN_DISTRIBUTION_ID,
-        PUBLIC_BLUE_DISTRIBUTION_ID,
-        PUBLIC_OAC_ID,
-    } from "$env/static/public";
 
     let { onPromote, onRetry, onDelete, environmentsPromise, onCreate } = $props();
 
-    const promoteToGreen =
-        (
-            environmentId: string,
-            hostBucketName: string,
-            recipesBucketName: string,
-            albDnsName: string,
-        ) =>
-        async () => {
-            try {
-                const response = await fetch("/api/promote-green", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        environment_id: environmentId,
-                        distribution_id: GREEN_DISTRIBUTION_ID,
-                        oac_id: OAC_ID,
-                        alb_dns_name: albDnsName,
-                        host_bucket_name: hostBucketName,
-                        recipes_bucket_name: recipesBucketName,
-                    }),
-                });
-
-                if (!response.ok) {
-                    throw new Error(`server error: ${response.status}`);
-                }
-            } catch (error) {
-                console.error("error promoting environment:", error);
-            }
-        };
-
-    const promoteToBlue = (environmentId: string) => async () => {
-        try {
-            const response = await fetch("/api/promote-blue", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    environment_id: environmentId,
-                    primary_distribution_id: BLUE_DISTRIBUTION_ID,
-                    staging_distribution_id: GREEN_DISTRIBUTION_ID,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`server error: ${response.status}`);
-            }
-        } catch (error) {
-            console.error("error promoting environment:", error);
-        }
-    };
-
-    const deleteEnvironment = (environmentId: string) => async () => {
-        try {
-            const response = await fetch("/api/destroy", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    environment_id: environmentId,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`server error: ${response.status}`);
-            }
-        } catch (error) {
-            console.error("error promoting environment:", error);
-        }
-    };
-
     function handlePromote(id: string, state: string) {
         if (state === "active" || state === "deploying") return;
+
         onPromote(id);
     }
 
@@ -95,10 +17,10 @@
         onRetry()
     }
 
-    // function handleDelete(id: string, state: string) {
-    //     if (state === "active") return; // Protección para producción
-    //     onDelete(id);
-    // }
+    function handleDelete(id: string, state: string) {
+        if (state === "active") return; // Protección para producción
+        onDelete(id);
+    }
 </script>
 
 <div class="table-container">
@@ -144,7 +66,7 @@
 
                         <!-- Acción Promote -->
                         <td>
-                            {#if env.state === "active"}
+                            {#if env.state === "blue"}
                                 <button
                                     class="btn btn-promote disabled"
                                     disabled>Current Live</button
@@ -152,11 +74,11 @@
                             {:else}
                                 <button
                                     class="btn btn-promote"
-                                    disabled={env.state === "deploying"}
+                                    disabled={env.status === "processing"}
                                     onclick={() =>
                                         handlePromote(env.id, env.state)}
                                 >
-                                    {env.state === "deploying"
+                                    {env.status === "processing"
                                         ? "Building"
                                         : "Route Traffic (Switch)"}
                                 </button>
@@ -165,7 +87,7 @@
 
                         <!-- Acción Delete -->
                         <td>
-                            {#if env.state === "active"}
+                            {#if env.status === "active"}
                                 <button
                                     class="btn btn-delete disabled"
                                     disabled
@@ -174,7 +96,7 @@
                             {:else}
                                 <button
                                     class="btn btn-delete"
-                                    onclick={() => deleteEnvironment(env.id)}
+                                    onclick={() => handleDelete(env.environment, env.status)}
                                 >
                                     {env.state === "deploying"
                                         ? "Cancel"

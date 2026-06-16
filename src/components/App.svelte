@@ -3,6 +3,12 @@
     import TrafficRouter from "./TrafficRouter.svelte";
     import EnvironmentTable from "./EnvironmentTable.svelte";
     import { invalidateAll } from '$app/navigation';
+    import {
+        PUBLIC_GREEN_DISTRIBUTION_ID,
+        PUBLIC_BLUE_DISTRIBUTION_ID,
+        PUBLIC_OAC_ID,
+    } from "$env/static/public";
+    import { EnvironmentStates, type Environment } from "../types";
 
     let { environmentsPromise } = $props();
 
@@ -52,23 +58,82 @@
         }
     }
 
-    function handlePromoteEvent(targetId: string) {
-        // Intercambiamos estados de forma segura
-        environments = environments.map((env) => {
-            if (env.id === targetId) {
-                return { ...env, state: "active" };
+    const promoteToGreen =
+        (environment: Environment) =>
+        async () => {
+            try {
+                const response = await fetch("/api/promote-green", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        environment_id: environment.environment,
+                        distribution_id: PUBLIC_GREEN_DISTRIBUTION_ID,
+                        oac_id: PUBLIC_OAC_ID,
+                        alb_dns_name: environment.alb_dns_name,
+                        host_bucket_name: environment.host_bucket_name,
+                        recipes_bucket_name: environment.recipes_bucket_name,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`server error: ${response.status}`);
+                }
+            } catch (error) {
+                console.error("error promoting environment:", error);
             }
-            if (env.state === "active") {
-                return { ...env, state: "standby" };
+        };
+
+    const promoteToBlue = (environmentId: string) => async () => {
+        try {
+            const response = await fetch("/api/promote-blue", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    environment_id: environmentId,
+                    primary_distribution_id: PUBLIC_BLUE_DISTRIBUTION_ID,
+                    staging_distribution_id: PUBLIC_GREEN_DISTRIBUTION_ID,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`server error: ${response.status}`);
             }
-            return env;
-        });
+        } catch (error) {
+            console.error("error promoting environment:", error);
+        }
+    };
+
+    function onPromoteClick(environment: Environment) {
+        if(environment.status === EnvironmentStates.GREEN) {
+            promoteToBlue(environment.environment)
+        } else if (environment.status === EnvironmentStates.UNUSED) {
+            promoteToGreen(environment)
+        }
     }
 
-    function handleDeleteEvent(targetId: string) {
-        // Removemos o cancelamos el entorno
-        environments = environments.filter((env) => env.id !== targetId);
-    }
+    const onDeleteClick = (environmentId: string) => async () => {
+        try {
+            const response = await fetch("/api/destroy", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    environment_id: environmentId,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`server error: ${response.status}`);
+            }
+        } catch (error) {
+            console.error("error promoting environment:", error);
+        }
+    };
 </script>
 
 <main class="console-wrapper">
@@ -91,8 +156,8 @@
         {environmentsPromise}
         onRetry={onRetryClick}
         onCreate={onCreateClick}
-        onPromote={handlePromoteEvent}
-        onDelete={handleDeleteEvent}
+        onPromote={onPromoteClick}
+        onDelete={onDeleteClick}
     />
 </main>
 
