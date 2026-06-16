@@ -15,7 +15,7 @@
 		"@fontsource/fira-mono": "5.2.7",
 		"@neoconfetti/svelte": "2.2.2",
 		"@sveltejs/adapter-static": "3.0.10",
-		"@sveltejs/kit": "2.61.1",
+		"@sveltejs/kit": "2.65.1",
 		"@sveltejs/vite-plugin-svelte": "7.1.2",
 		"svelte": "5.55.10",
 		"svelte-check": "4.4.8",

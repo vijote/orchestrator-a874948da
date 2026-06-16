@@ -1,5 +1,6 @@
 <script lang="ts">
-    import Orchestrator from '../components/Orchestrator.svelte';
+    import App from '../components/App.svelte';
+	let { data } = $props();
 </script>
 
 <svelte:head>
@@ -8,7 +9,7 @@
 </svelte:head>
 
 <section>
-	<Orchestrator/>
+	<App environmentsPromise={data.environmentsPromise}/>
 </section>
 
 <style>
