@@ -44,15 +44,15 @@
                 </tr>
             </thead>
             <tbody>
-                {#each response.environments as env (env.id)}
+                {#each response.environments as env (env.environment)}
                     <tr>
                         <!-- Colores dinámicos para los IDs principales -->
                         <td
                             class="env-id"
-                            class:blue={env.id.includes("BLUE")}
-                            class:green={env.id.includes("GREEN")}
+                            class:blue={env.environment.includes("blue")}
+                            class:green={env.environment.includes("green")}
                         >
-                            {env.id}
+                            {env.environment}
                         </td>
 
                         <!-- Etiquetas de Estado -->
