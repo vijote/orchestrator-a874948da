@@ -9,10 +9,7 @@ const config = {
 			pages: 'dist',
 			precompress: false,
 			strict: true
-		}),
-		experimental: {
-			explicitEnvironmentVariables: true
-		}
+		})
 	}
 };
 

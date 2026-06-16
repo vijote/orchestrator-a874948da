@@ -1,10 +1,10 @@
 <!-- EnvironmentTable.svelte -->
 <script lang="ts">
     import {
-        GREEN_DISTRIBUTION_ID,
-        BLUE_DISTRIBUTION_ID,
-        OAC_ID,
-    } from "$app/env/public";
+        PUBLIC_GREEN_DISTRIBUTION_ID,
+        PUBLIC_BLUE_DISTRIBUTION_ID,
+        PUBLIC_OAC_ID,
+    } from "$env/static/public";
 
     let { onPromote, onRetry, onDelete, environmentsPromise, onCreate } = $props();
 
