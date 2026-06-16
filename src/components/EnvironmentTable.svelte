@@ -74,11 +74,11 @@
                             {:else}
                                 <button
                                     class="btn btn-promote"
-                                    disabled={env.status === "processing"}
+                                    disabled={env.env_status === "processing"}
                                     onclick={() =>
-                                        handlePromote(env.environment, env.state)}
+                                        handlePromote(env.environment, env.env_status)}
                                 >
-                                    {env.status === "processing"
+                                    {env.env_status === "processing"
                                         ? "Building"
                                         : "Route Traffic (Switch)"}
                                 </button>
@@ -87,7 +87,7 @@
 
                         <!-- Acción Delete -->
                         <td>
-                            {#if env.status === "active"}
+                            {#if env.env_status === "active"}
                                 <button
                                     class="btn btn-delete disabled"
                                     disabled
@@ -96,7 +96,7 @@
                             {:else}
                                 <button
                                     class="btn btn-delete"
-                                    onclick={() => handleDelete(env.environment, env.status)}
+                                    onclick={() => handleDelete(env.environment, env.env_status)}
                                 >
                                     {env.state === "deploying"
                                         ? "Cancel"
