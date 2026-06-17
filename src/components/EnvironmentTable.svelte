@@ -1,12 +1,12 @@
 <!-- EnvironmentTable.svelte -->
 <script lang="ts">
+    import type { Environment } from "../types";
+
 
     let { onPromote, onRetry, onDelete, environmentsPromise, onCreate } = $props();
 
-    function handlePromote(id: string, state: string) {
-        if (state === "active" || state === "deploying") return;
-
-        onPromote(id);
+    function handlePromote(env: Environment) {
+        onPromote(env);
     }
 
     function handleCreate() {
@@ -18,7 +18,7 @@
     }
 
     function handleDelete(id: string, state: string) {
-        if (state === "active") return; // Protección para producción
+        if (state === "blue") return; // Protección para producción
         onDelete(id);
     }
 </script>
@@ -57,16 +57,16 @@
 
                         <!-- Etiquetas de Estado -->
                         <td>
-                            <span class="state-tag tag-{env.state}">
-                                {#if env.state === "active"}Active (Live){/if}
-                                {#if env.state === "standby"}Standby (Idle){/if}
-                                {#if env.state === "deploying"}Provisioning...{/if}
+                            <span class="state-tag tag-{env.env_status}">
+                                {#if env.env_status === "blue"}Active (Live){/if}
+                                {#if env.env_status === "green"}Standby (Idle){/if}
+                                {#if env.env_status === "processing"}Provisioning...{/if}
                             </span>
                         </td>
 
                         <!-- Acción Promote -->
                         <td>
-                            {#if env.state === "blue"}
+                            {#if env.env_status === "blue"}
                                 <button
                                     class="btn btn-promote disabled"
                                     disabled>Current Live</button
@@ -76,7 +76,7 @@
                                     class="btn btn-promote"
                                     disabled={env.env_status === "processing"}
                                     onclick={() =>
-                                        handlePromote(env.environment, env.env_status)}
+                                        handlePromote(env)}
                                 >
                                     {env.env_status === "processing"
                                         ? "Building"
@@ -98,7 +98,7 @@
                                     class="btn btn-delete"
                                     onclick={() => handleDelete(env.environment, env.env_status)}
                                 >
-                                    {env.state === "deploying"
+                                    {env.env_status === "deploying"
                                         ? "Cancel"
                                         : "Terminate"}
                                 </button>
