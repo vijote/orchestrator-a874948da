@@ -17,8 +17,7 @@
         onRetry()
     }
 
-    function handleDelete(id: string, state: string) {
-        if (state === "blue") return; // Protección para producción
+    function handleDelete(id: string) {
         onDelete(id);
     }
 </script>
@@ -59,7 +58,8 @@
                         <td>
                             <span class="state-tag tag-{env.env_status}">
                                 {#if env.env_status === "blue"}Active (Live){/if}
-                                {#if env.env_status === "green"}Standby (Idle){/if}
+                                {#if env.env_status === "green"}Staging (Test){/if}
+                                {#if env.env_status === "unused"}Standby (Idle){/if}
                                 {#if env.env_status === "processing"}Provisioning...{/if}
                             </span>
                         </td>
@@ -87,7 +87,7 @@
 
                         <!-- Acción Delete -->
                         <td>
-                            {#if env.env_status === "active"}
+                            {#if env.env_status === "blue"}
                                 <button
                                     class="btn btn-delete disabled"
                                     disabled
@@ -96,10 +96,11 @@
                             {:else}
                                 <button
                                     class="btn btn-delete"
-                                    onclick={() => handleDelete(env.environment, env.env_status)}
+                                    disabled={env.env_status === "processing"}
+                                    onclick={() => handleDelete(env.environment)}
                                 >
-                                    {env.env_status === "deploying"
-                                        ? "Cancel"
+                                    {env.env_status === "processing"
+                                        ? "Building"
                                         : "Terminate"}
                                 </button>
                             {/if}

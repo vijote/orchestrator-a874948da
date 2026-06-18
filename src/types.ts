@@ -1,6 +1,6 @@
 export type Environment = {
     environment: string
-    status: string
+    env_status: string
     alb_dns_name: string
     host_bucket_name: string
     recipes_bucket_name: string

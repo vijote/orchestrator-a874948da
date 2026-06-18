@@ -108,9 +108,9 @@
     };
 
     function onPromoteClick(environment: Environment) {
-        if(environment.status === EnvironmentStates.GREEN) {
+        if(environment.env_status === EnvironmentStates.GREEN) {
             promoteToBlue(environment.environment)
-        } else if (environment.status === EnvironmentStates.UNUSED) {
+        } else if (environment.env_status === EnvironmentStates.UNUSED) {
             promoteToGreen(environment)
         }
     }
