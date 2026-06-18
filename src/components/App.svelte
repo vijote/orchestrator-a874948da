@@ -85,7 +85,7 @@
             }
         };
 
-    const promoteToBlue = (environmentId: string) => async () => {
+    async function promoteToBlue(environmentId: string) {
         try {
             const response = await fetch("/api/promote-blue", {
                 method: "POST",
@@ -115,7 +115,7 @@
         }
     }
 
-    const onDeleteClick = (environmentId: string) => async () => {
+    async function onDeleteClick(environmentId: string) {
         try {
             const response = await fetch("/api/destroy", {
                 method: "POST",
