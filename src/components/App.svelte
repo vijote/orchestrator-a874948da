@@ -58,9 +58,7 @@
         }
     }
 
-    const promoteToGreen =
-        (environment: Environment) =>
-        async () => {
+    async function promoteToGreen(environment: Environment) {
             try {
                 const response = await fetch("/api/promote-green", {
                     method: "POST",
